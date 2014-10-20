@@ -46,14 +46,14 @@ def diagonal(n,P,i,j):
 ##################################################################################################################################################
 
 def achaReflexos(n,P,R):
-    compara = esquerda(P[n-1][0],P[n-1][1],P[1][0],P[1][1],P[0][0],P[0][1])
+    compara = esquerda(P[n-1].x,P[n-1].y,P[1].x,P[1].y,P[0].x,P[0].y)
     i = 1
     while i < n:
         j = (i-1)%n
         k = (i+1)%n
-        aux = esquerda(P[j][0],P[j][1],P[k][0],P[k][1],P[i][0],P[i][1])
+        aux = esquerda(P[j].x,P[j].y,P[k].x,P[k].y,P[i].x,P[i].y)
         if(aux != compara):
             #print "O ponto %d eh reflexo" % i
             #compara = aux
-            R.append(i)
+            R.append(P[i])
         i += 1

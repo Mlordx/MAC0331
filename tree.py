@@ -63,7 +63,6 @@ class Arvore:
         if(self.size == 0): return None
         else:
             res = self._get(x,self.raiz)
-            if(res is not None): print "achei" , res.trap
             return res
         
     def _get(self,x,v):

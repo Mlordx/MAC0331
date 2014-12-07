@@ -103,8 +103,8 @@ def insereDiagonal(vertice1,vertice2,diagonal,faces):
             face1 = Face(diagonal)
             face2 = Face(diagonal.getGemeo())
 
-            if((face1.tamFace() + face2.tamFace() - 2) != numArestas): print "OPA! Algo errado nas faces"
-            else: print "Tudo certo com as faces criadas!"
+            #if((face1.tamFace() + face2.tamFace() - 2) != numArestas): print "OPA! Algo errado nas faces"
+            #else: print "Tudo certo com as faces criadas!"
 
             faces.append(face1)
             faces.append(face2)
@@ -126,10 +126,10 @@ def trataCaso1(u,v,w,arvore,pontos,vertices,diagonais,faces):
         
     if(v[0].x == aux[0].to.x and v[0].y == aux[0].to.y): 
         arvore.insert((Segment(v[0],w),v,aux[2]))
-        print bcolors.OKBLUE,"Inseri um trapézio com vértice de apoio", v," : ",Segment(v[0],w),aux[2],bcolors.ENDC
+        #print bcolors.OKBLUE,"Inseri um trapézio com vértice de apoio", v," : ",Segment(v[0],w),aux[2],bcolors.ENDC
     else:
         arvore.insert((aux[0],v,Segment(v[0],w)))
-        print bcolors.OKBLUE,"Inseri um trapézio com vértice de apoio ",v,": ",aux[0],Segment(v[0],w),bcolors.ENDC
+        #print bcolors.OKBLUE,"Inseri um trapézio com vértice de apoio ",v,": ",aux[0],Segment(v[0],w),bcolors.ENDC
 
     if(pontaParaBaixo(aux[1],pontos)):
         diagonais.append(Segment(aux[1][0],v[0]))
@@ -145,7 +145,7 @@ def trataCaso1(u,v,w,arvore,pontos,vertices,diagonais,faces):
         Segment(aux[1][0],v[0]).hilight("blue")
         control.sleep()
         insereDiagonal(vertices[aux[1][1]-1],vertices[v[1]-1],aresta,faces)
-        print "Adicionada diagonal ",Segment(aux[1][0],v[0])
+        #print "Adicionada diagonal ",Segment(aux[1][0],v[0])
 
 def trataCaso2(u,v,w,arvore,vertices,diagonais,faces):
     if(left(u,v[0],w)): # u<=>w
@@ -157,11 +157,11 @@ def trataCaso2(u,v,w,arvore,vertices,diagonais,faces):
     arvore.delete(v[0])
 
     if(aux is None):
-        print bcolors.OKBLUE,"Inseri um trapézio com vértice de apoio ", v,": ",Segment(v[0],u),Segment(v[0],w),bcolors.ENDC
+        #print bcolors.OKBLUE,"Inseri um trapézio com vértice de apoio ", v,": ",Segment(v[0],u),Segment(v[0],w),bcolors.ENDC
         arvore.insert( ( Segment(v[0],u),v,Segment(v[0],w) ) )
     else:
         trap = aux.trap
-        print bcolors.OKBLUE,"Inseri dois trapézios com vértice de apoio ", v ,": ",trap[0],Segment(v[0],u)," E ",Segment(v[0],w),trap[2],bcolors.ENDC
+        #print bcolors.OKBLUE,"Inseri dois trapézios com vértice de apoio ", v ,": ",trap[0],Segment(v[0],u)," E ",Segment(v[0],w),trap[2],bcolors.ENDC
         arvore.insert( (Segment(v[0],w),v,trap[2]) )  #insiro esse primeiro para respeitar a ordem correta na arvore(dado que eu escolhi comparar por x do vertice de apoio
         arvore.insert( (trap[0],v,Segment(v[0],u)) )
 
@@ -178,7 +178,7 @@ def trataCaso2(u,v,w,arvore,vertices,diagonais,faces):
         Segment(trap[1][0],v[0]).hilight("blue")
         control.sleep()
         insereDiagonal(vertices[trap[1][1]-1],vertices[v[1]-1],aresta,faces)
-        print "Adicionada diagonal ", Segment(trap[1][0],v[0])
+        #print "Adicionada diagonal ", Segment(trap[1][0],v[0])
         
 def trataCaso3(v,arvore,pontos,vertices,diagonais,faces):
     aux = (arvore.get(v[0])).trap
@@ -218,14 +218,14 @@ def trataCaso3(v,arvore,pontos,vertices,diagonais,faces):
             Segment(aux2[1][0],v[0]).hilight("blue")            
             control.sleep()
             insereDiagonal(vertices[aux2[1][1]-1],vertices[v[1]-1],aresta,faces)
-            print "Adicionada diagonal ",Segment(aux2[1][0],v[0])
+            #print "Adicionada diagonal ",Segment(aux2[1][0],v[0])
 
         if( aux[2].init.x == v[0].x and aux[2].init.y == v[0].y):
             arvore.insert( (aux[0],v,aux2[2]) )
-            print bcolors.OKBLUE,"Inserido trapézio com vértice de apoio ",v," : ",aux[0],aux2[2]
+            #print bcolors.OKBLUE,"Inserido trapézio com vértice de apoio ",v," : ",aux[0],aux2[2]
         else:
             arvore.insert( (aux2[0],v,aux[2]) )
-            print bcolors.OKBLUE,"Inserido trapézio com vértice de apoio ",v,": ",aux2[0],aux[2],bcolors.ENDC
+            #print bcolors.OKBLUE,"Inserido trapézio com vértice de apoio ",v,": ",aux2[0],aux[2],bcolors.ENDC
 
 def lp(l):
     #na arvore, cada trapezio é uma tripla (Segmento,(ponto,indice),Segmento), sendo então trapezio[0] o segmento esquerdo, trapezio[2] o direito e trapezio[1] o vértice de apoio
@@ -329,13 +329,13 @@ def lp(l):
         control.sleep()
 
         if( (pontos[ant][0].y <= verts[k][0].y and verts[k][0].y < pontos[prox][0].y) or (pontos[prox][0].y <= verts[k][0].y and verts[k][0].y < pontos[ant][0].y) ): #Caso 1: uma aresta acima e outra embaixo
-            print "ENTREI NO CASO 1 NO VÉRTICE ", verts[k][0]
+            #print "ENTREI NO CASO 1 NO VÉRTICE ", verts[k][0]
             trataCaso1(pontos[ant][0],verts[k],pontos[prox][0],arvore,pontos,aux,diagonais,faces)
         elif(pontos[ant][0].y <= verts[k][0].y): #Caso 2: as duas arestas embaixo
-            print "ENTREI NO CASO 2 NO VÉRTICE ",verts[k][0]
+            #print "ENTREI NO CASO 2 NO VÉRTICE ",verts[k][0]
             trataCaso2(pontos[ant][0],verts[k],pontos[prox][0],arvore,aux,diagonais,faces)
         else: #Caso 3: as duas arestas em cima
-            print "ENTREI NO CASO 3 NO VÉRTICE ", verts[k][0]
+            #print "ENTREI NO CASO 3 NO VÉRTICE ", verts[k][0]
             trataCaso3(verts[k],arvore,pontos,aux,diagonais,faces)
 
         verts[k][0].hilight("red")

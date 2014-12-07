@@ -8,11 +8,12 @@ Implementação de árvore de busca binária para uso no algoritmo de linha de v
 """
 
 class Folha:#uso folha no sentido de elemento da árvore, e não necessariamente um nó sem vizinhos.
-    def __init__(self,trap,left=None,right=None,parent=None): 
+    def __init__(self,trap,left=None,right=None,parent=None,balance=0): 
         self.trap = trap #trapezio contido naquela folha
         self.l = left #nó esquerdo
         self.r = right #nó direito
         self.parent = parent #nó pai
+        self.balance = balance
     
     def replace(self,key,lc,rc): #substitui folha
         self.trap = key
@@ -33,6 +34,76 @@ class Arvore:
 
     def __len__(self): #overload no operador de tamanho
         return self.size
+
+    def rotateRight(self,raizRot):
+        novaRaiz = raizRot.l
+        raizRot.l = novaRaiz.r
+
+        if(novaRaiz.r is not None):
+            novaRaiz.r.parent = raizRot
+        novaRaiz.parent = raizRot.parent
+
+        if(not raizRot.parent): #é raiz
+            self.raiz = novaRaiz
+        else:
+            if(raizRot == raizRot.parent.r):
+                raizRot.parent.r  = novaRaiz
+            else:
+                raizRot.parent.l = novaRaiz
+        
+        novaRaiz.r = raizRot
+        raizRot.parent = novaRaiz
+        raizRot.balance += 1 - min(novaRaiz.balance,0)
+        novaRaiz.balance += 1 + max(raizRot.balance,0)
+    
+    def rotateLeft(self,raizRot):
+        novaRaiz = raizRot.r
+        raizRot.r = novaRaiz.l
+
+        if(novaRaiz.l is not None):
+            novaRaiz.l.parent = raizRot
+        novaRaiz.parent = raizRot.parent
+        
+        if(not raizRot.parent): #é raiz
+            self.raiz = novaRaiz
+        else:
+            if(raizRot == raizRot.parent.l):
+                raizRot.parent.l = novaRaiz
+            else:
+                raizRot.parent.r = novaRaiz
+        
+        novaRaiz.l = raizRot
+        raizRot.parent = novaRaiz
+        raizRot.balance += 1 - min(novaRaiz.balance,0)
+        novaRaiz.balance += 1 + max(raizRot.balance,0)
+            
+
+    def rebalance(self,node):
+        if(node.balance < 0):
+            if(node.r.balance > 0):
+                self.rotateRight(node.r)
+                self.rotateLeft(node)
+            else:
+                self.rotateLeft(node)
+        elif(node.balance > 0):
+            if(node.l.balance < 0):
+                self.rotateLeft(node.l)
+                self.rotateRight(node)
+            else:
+                self.rotateRight(node)
+
+    def updateBalance(self,node):
+        if(node.balance > 1 or node.balance < -1): 
+            self.rebalance(node)
+            return
+        if(node.parent is not None):
+            if(node.parent.l == node):
+                node.parent.balance += 1
+            elif(node.parent.r == node):
+                node.parent.balance -= 1
+
+            if(node.parent.balance != 0): self.updateBalance(node.parent)
+    
     
     def insert(self,x): #caso já haja raiz insere na árvore por recursão, senão apenas coloca o trapézio novo como raiz
         if(self.size > 0):
@@ -47,11 +118,14 @@ class Arvore:
                 v.l = Folha(x,parent=v)
             else:
                 self._insert(x,v.l)
+                self.updateBalance(v.l)
         else:
             if(v.r is None):
                 v.r = Folha(x,parent=v)
             else:
                 self._insert(x,v.r)
+                self.updateBalance(v.r)
+
 
     def contains(self,x,trap): #Checa se o trapézio do nó atual da árvore contém o ponto x
         if(trap[0].init.x == x.x and trap[0].init.y == x.y) or (trap[0].to.x == x.x and trap[0].to.y == x.y) or (trap[2].init.x == x.x and trap[2].init.y == x.y) or (trap[2].to.x == x.x and trap[2].to.y == x.y): return True  #caso ele esteja nas pontas de uma das arestas do trapézio
@@ -125,32 +199,48 @@ class Arvore:
                 x.r.parent = x.parent
             
     def remove(self,x):
-        #print "removi o trapezio : ",x.trap[0],x.trap[1],x.trap[2]
         if(not(x.l or x.r)): #x é folha
             if(x == x.parent.l):
                 x.parent.l = None
+                x.parent.balance -= 1
+                self.updateBalance(x.parent)
             else:
                 x.parent.r = None
+                x.parent.balance += 1
+                self.updateBalance(x.parent)
         elif(x.l and x.r): #x tem os dois filhos
             s = self.findSuccessor(x)
+            bla = x.balance
             self.spliceOut(s)
             x = s
+            x.balance = bla + 1
+            x.r.balance -= 1
+            self.updateBalance(x.r)
+			
         else:
             if(x.l is not None):
                 if(x.parent and x == x.parent.l): #é filho esquerdo
                     x.l.parent = x.parent
                     x.parent.l = x.l
+                    x.parent.balance -= 1
+                    self.updateBalance(x.parent)
                 elif(x.parent and x == x.parent.r): #é filho direito
                     x.r.parent = x.parent
                     x.parent.r = x.r
+                    x.parent.balance += 1
+                    self.updateBalance(x.parent)
                 else:   #x era a raiz
-                    x.replace(x.l.trap,x.l.l,x.l.r)
+                    x.replace(x.l.trap,x.l.l,x.l.r) 
             else:
                 if(x.parent and x == x.parent.l): #é filho esquerdo
                     x.r.parent = x.parent
                     x.parent.l = x.r
+                    x.parent.balance -= 1
+                    self.updateBalance(x.parent)
                 elif(x.parent and x == x.parent.r): #é filho direito
                     x.r.parent = x.parent
                     x.parent.r = x.r
+                    x.parent.balance += 1
+                    self.updateBalance(x.parent)
                 else: 
                     x.replace(x.r.trap,x.r.l,x.r.r)

@@ -33,12 +33,14 @@ def triangulaMonotono(l):#Os pontos devem vir em ordem anti-horária
     
     ########################################### 
     #Esse pedaço acha o vertice mais alto e o mais baixo e realiza o merge
-    yMax = -1
+    yMax = -20000000
     yMin = 2000000
     vMax = pontos[0]
     vMin = pontos[N-1]
 
     for i in range(N):
+        if(pontos[i][0].y == yMax and pontos[i][0].x < vMax[0].x): vMax = pontos[i]
+        if(pontos[i][0].y == yMin and pontos[i][0].x > vMin[0].x): vMin = pontos[i]
         if(pontos[i][0].y > yMax):
             vMax = pontos[i]
             yMax = vMax[0].y
@@ -56,16 +58,12 @@ def triangulaMonotono(l):#Os pontos devem vir em ordem anti-horária
     else: j = 0
 
     lado[vMin[1]] = False
-    #verts.append(vMax)
-
 
     if(vMax[1]!= 0): i = vMax[1]-1
     else: i = N-1
 
     if(vMax[1]!= N-1):j = vMax[1]+1
     else: j = 0            
-
-    #verts = sorted(pontos,key=lambda x: (x[0].y,-x[0].x), reverse=True)	 
 
     verts.append(vMax);
     while(len(verts) < N): #Merge
@@ -90,51 +88,13 @@ def triangulaMonotono(l):#Os pontos devem vir em ordem anti-horária
             verts.append(pontos[i])
             if(i!=0):i -= 1
             else: i = N-1
+
     ########################################
 
-
-    
-    esquerda = []
-    esq = []
-    direita = []
-    dire = []
-
-    i = 1
-    j = 0
-    esquerda.append(vMax)
-    while(pontos[i] != vMin):
-        esquerda.append(pontos[i])
-        if(i!=0):i -= 1
-        else: i = N-1
-
-    while(pontos[j] != vMin):
-        direita.append(pontos[j])
-        if(j != N-2):j += 1
-        else: j = 0
-    direita.append(vMin)
-
-    while(len(verts) < N):
-        if(i == N-1):
-            while(len(verts) < N):
-                verts.append(pontos[j])
-                j += 1
-        elif(j == N-1):
-            while(len(verts) < N):
-                verts.append(pontos[i])
-                i -= 1
-
-        if(pontos[i].y > pontos[j].y or (pontos[i].y == pontos[j].y and pontos[i].x < pontos[j].x)):
-            verts.append(pontos[i])
-            if(i != 0): i -= 1
-            else: i = N-1
-        else:
-            verts.append(pontos[j])
-            if(j != N-1): j += 1
-            else: j = 0
-
-
-
-    verts = sorted(pontos,key=lambda x: (x[0].y,-x[0].x), reverse=True)	 
+    #verts = sorted(pontos,key=lambda x: (x[0].y,-x[0].x), reverse=True)	 
+    for i in range(N):
+        if(lado[i] == True): pontos[i][0].hilight("blue")
+        else: pontos[i][0].hilight("green")
 
     print verts
 

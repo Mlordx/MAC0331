@@ -7,6 +7,16 @@ from geocomp.common.prim import *
 Implementação de árvore de busca binária para uso no algoritmo de linha de varredura de Lee e Preparata.
 """
 
+"""
+fazer campo altura
+
+Fazer verificador que recebe raiz e checa :
+se é folha e balanço != 0 >> errado
+
+
+
+"""
+
 class Folha:#uso folha no sentido de elemento da árvore, e não necessariamente um nó sem vizinhos.
     def __init__(self,trap,left=None,right=None,parent=None,balance=0): 
         self.trap = trap #trapezio contido naquela folha
@@ -79,6 +89,7 @@ class Arvore:
             
 
     def rebalance(self,node):
+        print "fiz rotação"
         if(node.balance < 0):
             if(node.r.balance > 0):
                 self.rotateRight(node.r)
@@ -110,21 +121,22 @@ class Arvore:
             self._insert(x,self.raiz)  
         else:
             self.raiz = Folha(x)
+            
         self.size += 1
 
     def _insert(self,x,v):
         if(x[1][0].x <= v.trap[1][0].x):
             if(v.l is None):
                 v.l = Folha(x,parent=v)
+                self.updateBalance(v.l)
             else:
                 self._insert(x,v.l)
-                self.updateBalance(v.l)
         else:
             if(v.r is None):
                 v.r = Folha(x,parent=v)
+                self.updateBalance(v.r)                
             else:
                 self._insert(x,v.r)
-                self.updateBalance(v.r)
 
 
     def contains(self,x,trap): #Checa se o trapézio do nó atual da árvore contém o ponto x
@@ -137,6 +149,7 @@ class Arvore:
         if(self.size == 0): return None
         else:
             res = self._get(x,self.raiz)
+            #if(res is not None): print "balanço do nó(",res.trap,") = ",res.balance
             return res
         
     def _get(self,x,v):
@@ -156,7 +169,6 @@ class Arvore:
                 self.remove(r)
                 self.size -= 1
         elif(self.size == 1 and self.contains(x,self.raiz.trap)): #caso o trapézio a ser removido fosse o único na árvore
-            #print "removi o trapezio : ",self.raiz.trap[0],self.raiz.trap[1],self.raiz.trap[2]
             self.raiz = None
             self.size -= 1
 
@@ -210,15 +222,17 @@ class Arvore:
                 self.updateBalance(x.parent)
         elif(x.l and x.r): #x tem os dois filhos
             s = self.findSuccessor(x)
-            bla = x.balance
-            self.spliceOut(s)
-            x = s
-            x.balance = bla + 1
-            x.r.balance -= 1
-            self.updateBalance(x.r)
+            #bla = x.balance
+            #self.spliceOut(s)
+            #x = s
+            #x.balance = bla + 1
+            #x.r.balance -= 1
+            #self.updateBalance(x.r)
+            x.trap = s.trap
+            self.remove(s)
 			
         else:
-            if(x.l is not None):
+            if(x.l is not None):#tem um filho esquerdo 
                 if(x.parent and x == x.parent.l): #é filho esquerdo
                     x.l.parent = x.parent
                     x.parent.l = x.l

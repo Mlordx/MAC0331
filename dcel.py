@@ -63,13 +63,9 @@ class Face:
 
     def tamFace(self):
         contador = 1
-        print self.aresta.getAresta()
-
         e = self.aresta.getAnt()
         while(e.getAresta() != self.aresta.getAresta()):
-            print e.getAresta()
             contador += 1
             e = e.getAnt()
 
-        print"\n\n"
         return contador
